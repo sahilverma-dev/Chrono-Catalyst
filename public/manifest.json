@@ -1,0 +1,18 @@
+{
+  "manifest_version": 3,
+  "name": "Chrono Catalyst",
+  "version": "1.0.1",
+  "description": "Set a target date with Chrono Catalyst and stay motivated as the countdown pushes you to achieve your goals.",
+  "chrome_url_overrides": {
+    "newtab": "index.html"
+  },
+  "action": {
+    "default_popup": "popup.html"
+  },
+  "icons": {
+    "16": "icons/icon16.png",
+    "32": "icons/icon32.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  }
+}
