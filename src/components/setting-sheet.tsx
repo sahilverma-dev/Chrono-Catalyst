@@ -13,6 +13,7 @@ import { Switch } from "./ui/switch";
 import { useTheme } from "./providers/theme-provider";
 import { Textarea } from "./ui/textarea";
 import { Button } from "./ui/button";
+import { DateTimePicker } from "./ui/datetime-picker";
 
 interface SettingSheetProps {
   open: boolean;
@@ -49,17 +50,16 @@ const SettingSheet: React.FC<SettingSheetProps> = ({ open, onOpenChange }) => {
         </SheetHeader>
         <div className="space-y-4 py-4">
           <div className="flex items-center justify-between gap-4">
-            <Label htmlFor="date">Target Date</Label>
+            {/* <Label htmlFor="date">Target Date</Label> */}
 
-            <Input
+            <DateTimePicker
               id="date"
-              type="date"
               required
-              value={date?.toJSON().split("T")[0] || ""}
+              value={date}
+              placeholder="Pick your target date and time"
+              min={new Date()}
+              use12HourFormat
               onChange={handleDateChange}
-              min={new Date().toJSON().split("T")[0]}
-              className="w-auto"
-              // className="flex rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
               style={{
                 colorScheme: theme === "dark" ? "dark" : "light",
               }}

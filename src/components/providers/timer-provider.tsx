@@ -2,7 +2,7 @@ import { createContext, useEffect, useState } from "react";
 
 interface TimerContext {
   haveTarget: boolean;
-  date: null | Date;
+  date: undefined | Date;
   color: string;
   isNumbersAnimated: boolean;
   isColorAnimated: boolean;
@@ -12,7 +12,7 @@ interface TimerContext {
 
   handleMessageChange: (message: string) => void;
   handleShowQuoteChange: (showQuote: boolean) => void;
-  handleDateChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  handleDateChange: (date: Date | undefined) => void;
   handleColorChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
   handleIsNumbersAnimatedChange: (isNumbersAnimated: boolean) => void;
   handleIsColorAnimatedChange: (isColorAnimated: boolean) => void;
@@ -22,7 +22,7 @@ interface TimerContext {
 export const TimerContext = createContext<TimerContext>({
   haveTarget: false,
   color: "#ff7700",
-  date: null,
+  date: undefined,
   isNumbersAnimated: true,
   isColorAnimated: true,
   message: "",
@@ -31,6 +31,7 @@ export const TimerContext = createContext<TimerContext>({
   handleIsNumbersAnimatedChange: () => {},
   handleMessageChange: () => {},
   handleShowQuoteChange: () => {},
+  handleDateChange: () => {},
   handleIsColorAnimatedChange: () => {},
   handleShowMillisecondsChange: () => {},
 });
@@ -40,9 +41,9 @@ const TimerProvider = ({ children }: React.PropsWithChildren) => {
     const savedData = localStorage.getItem("target-date");
     return savedData ? true : false;
   });
-  const [date, setDate] = useState<Date | null>(() => {
+  const [date, setDate] = useState<Date | undefined>(() => {
     const savedData = localStorage.getItem("target-date");
-    return savedData ? new Date(savedData) : null;
+    return savedData ? new Date(savedData) : undefined;
   });
   const [color, setColor] = useState(
     () => localStorage.getItem("color") || "#ff7700"
@@ -67,23 +68,29 @@ const TimerProvider = ({ children }: React.PropsWithChildren) => {
     return saved !== null ? JSON.parse(saved) : true;
   });
 
-  const handleDateChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (event.target.value === "") {
+  const handleDateChange = (date: Date | undefined) => {
+    if (!date) {
       localStorage.removeItem("target-date");
-      setDate(null);
+      setDate(undefined);
+      setHaveTarget(false);
+      return;
+    }
+    if (date.toString() === "") {
+      localStorage.removeItem("target-date");
+      setDate(undefined);
       setHaveTarget(false);
       return;
     }
 
     const today = new Date().toJSON().split("T")[0];
 
-    if (event.target.value === today) {
-      setDate(null);
+    if (date.toString() === today) {
+      setDate(undefined);
       setHaveTarget(false);
       localStorage.removeItem("target-date");
       return;
     }
-    const newDate = new Date(event.target.value);
+    const newDate = new Date(date);
     setDate(newDate);
     setHaveTarget(true);
     localStorage.setItem("target-date", newDate.toISOString());
@@ -131,7 +138,7 @@ const TimerProvider = ({ children }: React.PropsWithChildren) => {
       setDate(date);
     } else {
       setHaveTarget(false);
-      setDate(null);
+      setDate(undefined);
     }
   }, []);
 

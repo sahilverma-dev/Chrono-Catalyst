@@ -65,14 +65,25 @@ const Timer: React.FC = () => {
       return;
     }
 
+    const newTimeLeft = calculateTimeLeft(target);
+    if (Object.values(newTimeLeft).every((value) => value === 0)) {
+      setTimeLeft(null);
+      return;
+    }
+
     const intervalId = setInterval(() => {
       const newTimeLeft = calculateTimeLeft(target);
+      if (Object.values(newTimeLeft).every((value) => value === 0)) {
+        setTimeLeft(null);
+        clearInterval(intervalId);
+        return;
+      }
       setTimeLeft(newTimeLeft);
 
       if (Object.values(newTimeLeft).every((value) => value === 0)) {
         clearInterval(intervalId);
       }
-    }, 90);
+    }, 69);
 
     return () => clearInterval(intervalId);
   }, [target]);
@@ -94,7 +105,7 @@ const Timer: React.FC = () => {
   }, [timeLeft]);
 
   return (
-    <div className="p-4 w-full">
+    <div className="p-2 lg:p-4 w-full">
       <AnimatePresence mode="sync">
         <motion.div
           key="content"
@@ -117,90 +128,101 @@ const Timer: React.FC = () => {
                 layout: { duration: 0.3 },
               }}
             >
-              <p className="text-6xl font-bold">
+              <p className="text-2xl lg:text-6xl font-bold">
                 Welcome to the Chrono Catalyst
               </p>
-              <p className="text-4xl mt-4">
+              <p className="text-sm lg:text-4xl mt-2 md:mt-4">
                 Set your target from settings to start the timer
               </p>
             </motion.div>
-          ) : (
-            timeLeft && (
-              <>
-                {showQuote && message.length === 0 && (
-                  <motion.div
-                    layoutId="quote"
-                    key="quote"
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -20 }}
-                    className="text-center mb-8"
-                  >
-                    <h1 className="text-4xl font-bold mb-6">
-                      Quote for the day!
-                    </h1>
-                    <p className="text-xl font-serif italic mb-4 leading-relaxed">
-                      "{quote.quote}"
-                    </p>
-                    <p className="text-center font-semibold">
-                      - {quote.author}
-                    </p>
-                  </motion.div>
-                )}
-                {message.length > 0 && (
-                  <motion.div
-                    layoutId="message"
-                    key="message"
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -20 }}
-                    className="text-center text-2xl mb-8 w-full max-w-2xl mx-auto"
-                  >
-                    {message}
-                  </motion.div>
-                )}
+          ) : timeLeft ? (
+            <>
+              {showQuote && message.length === 0 && (
                 <motion.div
-                  layoutId="time"
-                  className="flex gap-5 justify-center flex-wrap"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
+                  layoutId="quote"
+                  key="quote"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -20 }}
+                  className="text-center mb-8"
                 >
-                  {timeUnits.map(({ unit, value, format }, index) => {
-                    if (unit === "milliseconds" && !showMilliseconds) {
-                      return null;
-                    }
-
-                    return (
-                      <motion.div
-                        layout
-                        initial={{ opacity: 0, y: -20, scale: 0.8 }}
-                        animate={{ opacity: 1, y: 0, scale: 1 }}
-                        exit={{ opacity: 0, y: -20, scale: 0.8 }}
-                        transition={{
-                          duration: 0.5,
-                          delay: index * 0.1,
-                        }}
-                        layoutId={unit}
-                        key={unit}
-                        className="text-center w-16 sm:w-24 flex items-center flex-col justify-center"
-                      >
-                        <div className="text-2xl sm:text-6xl font-bold">
-                          <NumberFlow
-                            value={value}
-                            format={format}
-                            animated={isNumbersAnimated}
-                          />
-                        </div>
-                        <div className="text-center w-full text-xs sm:text-sm capitalize text-muted-foreground mt-2">
-                          {unit}
-                        </div>
-                      </motion.div>
-                    );
-                  })}
+                  <h1 className="text-4xl font-bold mb-6">
+                    Quote for the day!
+                  </h1>
+                  <p className="text-xl font-serif italic mb-4 leading-relaxed">
+                    "{quote.quote}"
+                  </p>
+                  <p className="text-center font-semibold">- {quote.author}</p>
                 </motion.div>
-              </>
-            )
+              )}
+              {message.length > 0 && (
+                <motion.div
+                  layoutId="message"
+                  key="message"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -20 }}
+                  className="text-center text-2xl mb-8 w-full max-w-2xl mx-auto"
+                >
+                  {message}
+                </motion.div>
+              )}
+              <motion.div
+                layoutId="time"
+                className="flex gap-5 justify-center flex-wrap"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+              >
+                {timeUnits.map(({ unit, value, format }, index) => {
+                  if (unit === "milliseconds" && !showMilliseconds) {
+                    return null;
+                  }
+
+                  return (
+                    <motion.div
+                      layout
+                      initial={{ opacity: 0, y: -20, scale: 0.8 }}
+                      animate={{ opacity: 1, y: 0, scale: 1 }}
+                      exit={{ opacity: 0, y: -20, scale: 0.8 }}
+                      transition={{
+                        duration: 0.5,
+                        delay: index * 0.1,
+                      }}
+                      layoutId={unit}
+                      key={unit}
+                      className="text-center w-16 sm:w-24 flex items-center flex-col justify-center"
+                    >
+                      <div className="text-2xl sm:text-6xl font-bold">
+                        <NumberFlow
+                          value={value}
+                          format={format}
+                          animated={isNumbersAnimated}
+                        />
+                      </div>
+                      <div className="text-center w-full text-xs sm:text-sm capitalize text-muted-foreground mt-2">
+                        {unit}
+                      </div>
+                    </motion.div>
+                  );
+                })}
+              </motion.div>
+            </>
+          ) : (
+            <motion.div
+              layout
+              layoutId="completed"
+              key="completed"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="text-center"
+            >
+              <p className="text-6xl font-bold">Time Completed!</p>
+              <p className="text-xl mt-4 text-muted-foreground">
+                I hope you your target was met, now let&apos;s set another one.
+              </p>
+            </motion.div>
           )}
         </motion.div>
       </AnimatePresence>

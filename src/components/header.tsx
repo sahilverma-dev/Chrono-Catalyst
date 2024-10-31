@@ -8,7 +8,7 @@ import { cn } from "@/lib/utils";
 const Header = () => {
   const [openSetting, setOpenSetting] = useState(false);
   return (
-    <div className="fixed flex items-center gap-2 top-4 right-4 py-2 px-4">
+    <div className="fixed flex items-center gap-1 lg:gap-2 top-0 right-0 lg:top-4 lg:right-4 py-2 px-4">
       <a
         href="https://github.com/sahilverma-dev/Chrono-Catalyst"
         target="_blank"
@@ -23,7 +23,7 @@ const Header = () => {
       <Button
         variant={"secondary"}
         onClick={() => setOpenSetting(true)}
-        className="aspect-square rounded-full h-auto"
+        className="aspect-square rounded-full px-2 lg:px-4 lg:h-auto"
       >
         <SettingsIcon />
       </Button>
