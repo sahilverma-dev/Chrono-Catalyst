@@ -26,6 +26,9 @@ interface TimerContext {
   // Onboarding
   isOnboardingCompleted: boolean;
 
+  // Settings
+  isSettingsOpen: boolean;
+
   handleMessageChange: (message: string) => void;
   handleShowQuoteChange: (showQuote: boolean) => void;
   handleDateChange: (date: Date | undefined) => void;
@@ -45,6 +48,9 @@ interface TimerContext {
 
   // Onboarding Handlers
   handleCompleteOnboarding: () => void;
+
+  // Settings Handlers
+  handleSettingsOpenChange: (open: boolean) => void;
 }
 
 export const TimerContext = createContext<TimerContext>({
@@ -64,6 +70,7 @@ export const TimerContext = createContext<TimerContext>({
   focusLabel: "Focus",
   quoteIndex: -1,
   isOnboardingCompleted: true,
+  isSettingsOpen: false,
 
   handleIsNumbersAnimatedChange: () => {},
   handleMessageChange: () => {},
@@ -79,6 +86,7 @@ export const TimerContext = createContext<TimerContext>({
   handleResetFocus: () => {},
   handleRefeshQuote: () => {},
   handleCompleteOnboarding: () => {},
+  handleSettingsOpenChange: () => {},
 });
 
 const TimerProvider = ({ children }: React.PropsWithChildren) => {
@@ -145,6 +153,9 @@ const TimerProvider = ({ children }: React.PropsWithChildren) => {
     const saved = localStorage.getItem("isOnboardingCompleted");
     return saved ? JSON.parse(saved) : false;
   });
+
+  // Settings State
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
 
   const handleDateChange = (date: Date | undefined) => {
     if (!date) {
@@ -272,6 +283,10 @@ const TimerProvider = ({ children }: React.PropsWithChildren) => {
     localStorage.setItem("isOnboardingCompleted", JSON.stringify(true));
   };
 
+  const handleSettingsOpenChange = (open: boolean) => {
+    setIsSettingsOpen(open);
+  };
+
   // Restore running timer on load if needed
   useEffect(() => {
     if (mode === "focus" && focusStatus === "running" && focusEndTime) {
@@ -313,6 +328,7 @@ const TimerProvider = ({ children }: React.PropsWithChildren) => {
         focusLabel,
         quoteIndex,
         isOnboardingCompleted,
+        isSettingsOpen,
         handleShowQuoteChange,
         handleIsNumbersAnimatedChange,
         handleDateChange,
@@ -328,6 +344,7 @@ const TimerProvider = ({ children }: React.PropsWithChildren) => {
         handleResetFocus,
         handleRefeshQuote,
         handleCompleteOnboarding,
+        handleSettingsOpenChange,
       }}
     >
       {children}

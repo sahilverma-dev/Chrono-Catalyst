@@ -3,9 +3,16 @@ import Header from "./components/header";
 import { useTimer } from "./hooks/use-timer";
 import { cn } from "./lib/utils";
 import OnboardingWizard from "./components/onboarding/onboarding-wizard";
+import SettingSheet from "./components/setting-sheet";
 
 const App = () => {
-  const { color, isColorAnimated, isOnboardingCompleted } = useTimer();
+  const {
+    color,
+    isColorAnimated,
+    isOnboardingCompleted,
+    isSettingsOpen,
+    handleSettingsOpenChange,
+  } = useTimer();
   return (
     <div className="w-full h-dvh flex items-center justify-center relative">
       <div
@@ -18,6 +25,10 @@ const App = () => {
         }}
       />
       {!isOnboardingCompleted && <OnboardingWizard />}
+      <SettingSheet
+        open={isSettingsOpen}
+        onOpenChange={handleSettingsOpenChange}
+      />
       <Header />
       <Timer />
     </div>

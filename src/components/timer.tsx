@@ -30,6 +30,7 @@ const Timer: React.FC = () => {
     handlePauseFocus,
     handleResetFocus,
     handleRefeshQuote,
+    handleSettingsOpenChange,
   } = useTimer();
 
   const quote = useMemo(() => {
@@ -79,9 +80,17 @@ const Timer: React.FC = () => {
               <p className="text-2xl lg:text-6xl font-bold">
                 Welcome to the Chrono Catalyst
               </p>
-              <p className="text-sm lg:text-4xl mt-2 md:mt-4">
+              <p className="text-sm lg:text-4xl mt-2 md:mt-4 mb-6">
                 Set your target from settings to start the timer
               </p>
+              <Button
+                size={"lg"}
+                variant={"secondary"}
+                onClick={() => handleSettingsOpenChange(true)}
+                className="md:text-2xl md:py-7 rounded-2xl"
+              >
+                Set Now
+              </Button>
             </motion.div>
           ) : (
             <>
