@@ -106,10 +106,22 @@ const Timer: React.FC = () => {
                       <ReloadIcon className="w-5 h-5" />
                     </Button>
                   </h1>
-                  <p className="text-xl font-serif italic mb-4 leading-relaxed">
-                    "{quote.quote}"
-                  </p>
-                  <p className="text-center font-semibold">- {quote.author}</p>
+                  <AnimatePresence mode="wait">
+                    <motion.div
+                      key={quote.quote}
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -10 }}
+                      transition={{ duration: 0.2 }}
+                    >
+                      <p className="text-xl font-serif italic mb-4 leading-relaxed">
+                        "{quote.quote}"
+                      </p>
+                      <p className="text-center font-semibold">
+                        - {quote.author}
+                      </p>
+                    </motion.div>
+                  </AnimatePresence>
                 </motion.div>
               )}
 
