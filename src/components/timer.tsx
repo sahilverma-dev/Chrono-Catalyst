@@ -1,9 +1,10 @@
 import { quotes } from "@/constans/quotes";
 import { useTimer } from "@/hooks/use-timer";
-import NumberFlow, { Format } from "@number-flow/react";
+import { Format } from "@number-flow/react";
 import { useState, useEffect, useMemo } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { variants } from "@/constans/variants";
+import TimerUnit from "./timer-unit";
 
 interface TimeLeft {
   years: number;
@@ -70,6 +71,7 @@ const Timer: React.FC = () => {
       setTimeLeft(null);
       return;
     }
+    setTimeLeft(newTimeLeft);
 
     const intervalId = setInterval(() => {
       const newTimeLeft = calculateTimeLeft(target);
@@ -174,38 +176,29 @@ const Timer: React.FC = () => {
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
               >
-                {timeUnits.map(({ unit, value, format }, index) => {
-                  if (unit === "milliseconds" && !showMilliseconds) {
-                    return null;
-                  }
+                {timeUnits
+                  .filter(
+                    (t) =>
+                      t.value > 0 ||
+                      t.unit === "seconds" ||
+                      t.unit === "milliseconds"
+                  )
+                  .map(({ unit, value, format }, index) => {
+                    if (unit === "milliseconds" && !showMilliseconds) {
+                      return null;
+                    }
 
-                  return (
-                    <motion.div
-                      layout
-                      initial={{ opacity: 0, y: -20, scale: 0.8 }}
-                      animate={{ opacity: 1, y: 0, scale: 1 }}
-                      exit={{ opacity: 0, y: -20, scale: 0.8 }}
-                      transition={{
-                        duration: 0.5,
-                        delay: index * 0.1,
-                      }}
-                      layoutId={unit}
-                      key={unit}
-                      className="text-center w-16 sm:w-24 flex items-center flex-col justify-center"
-                    >
-                      <div className="text-2xl sm:text-6xl font-bold">
-                        <NumberFlow
-                          value={value}
-                          format={format}
-                          animated={isNumbersAnimated}
-                        />
-                      </div>
-                      <div className="text-center w-full text-xs sm:text-sm capitalize text-muted-foreground mt-2">
-                        {unit}
-                      </div>
-                    </motion.div>
-                  );
-                })}
+                    return (
+                      <TimerUnit
+                        key={unit}
+                        value={value}
+                        unit={unit}
+                        format={format}
+                        index={index}
+                        animated={isNumbersAnimated}
+                      />
+                    );
+                  })}
               </motion.div>
             </>
           ) : (
