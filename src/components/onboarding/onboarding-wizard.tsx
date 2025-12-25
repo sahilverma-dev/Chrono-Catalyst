@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "../ui/button";
 import { useTimer } from "@/hooks/use-timer";
 import { DateTimePicker } from "../ui/datetime-picker";
-import { Input } from "../ui/input";
+
 import { Label } from "../ui/label";
 import { ToggleGroup, ToggleGroupItem } from "../ui/toggle-group";
 import { useTheme } from "../providers/theme-provider";
@@ -20,10 +20,6 @@ const OnboardingWizard = () => {
     handleModeChange,
     date,
     handleDateChange,
-    focusDuration,
-    handleFocusDurationChange,
-    focusLabel,
-    handleFocusLabelChange,
   } = useTimer();
 
   const handleNext = () => {
@@ -141,34 +137,12 @@ const OnboardingWizard = () => {
                     />
                   </div>
                 ) : (
-                  <>
-                    <div className="space-y-2">
-                      <Label htmlFor="focus-duration">
-                        Focus Duration (minutes)
-                      </Label>
-                      <Input
-                        id="focus-duration"
-                        type="number"
-                        min={1}
-                        value={focusDuration}
-                        onChange={(e) =>
-                          handleFocusDurationChange(Number(e.target.value))
-                        }
-                        className="text-lg"
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="focus-label">Session Label</Label>
-                      <Input
-                        id="focus-label"
-                        type="text"
-                        value={focusLabel}
-                        placeholder="e.g. Deep Work"
-                        onChange={(e) => handleFocusLabelChange(e.target.value)}
-                        className="text-lg"
-                      />
-                    </div>
-                  </>
+                  <div className="text-center py-4">
+                    <p className="text-xl">Ready to flow?</p>
+                    <p className="text-muted-foreground mt-2">
+                      You can choose your focused duration from the main screen.
+                    </p>
+                  </div>
                 )}
               </div>
 

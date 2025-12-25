@@ -20,7 +20,6 @@ interface TimerContext {
   focusRemaining: number; // in milliseconds
   focusStatus: FocusStatus;
   focusEndTime: number | null;
-  focusLabel: string;
   quoteIndex: number;
 
   // Onboarding
@@ -40,7 +39,6 @@ interface TimerContext {
   // Focus Mode Handlers
   handleModeChange: (mode: TimerMode) => void;
   handleFocusDurationChange: (duration: number) => void;
-  handleFocusLabelChange: (label: string) => void;
   handleStartFocus: () => void;
   handlePauseFocus: () => void;
   handleResetFocus: () => void;
@@ -67,7 +65,6 @@ export const TimerContext = createContext<TimerContext>({
   focusRemaining: 25 * 60 * 1000,
   focusStatus: "idle",
   focusEndTime: null,
-  focusLabel: "Focus",
   quoteIndex: -1,
   isOnboardingCompleted: true,
   isSettingsOpen: false,
@@ -80,7 +77,6 @@ export const TimerContext = createContext<TimerContext>({
   handleShowMillisecondsChange: () => {},
   handleModeChange: () => {},
   handleFocusDurationChange: () => {},
-  handleFocusLabelChange: () => {},
   handleStartFocus: () => {},
   handlePauseFocus: () => {},
   handleResetFocus: () => {},
@@ -139,9 +135,6 @@ const TimerProvider = ({ children }: React.PropsWithChildren) => {
   const [focusEndTime, setFocusEndTime] = useState<number | null>(() => {
     const saved = localStorage.getItem("focusEndTime");
     return saved ? parseInt(saved) : null;
-  });
-  const [focusLabel, setFocusLabel] = useState(() => {
-    return localStorage.getItem("focusLabel") || "Focus";
   });
   const [quoteIndex, setQuoteIndex] = useState(() => {
     const saved = localStorage.getItem("quoteIndex");
@@ -235,11 +228,6 @@ const TimerProvider = ({ children }: React.PropsWithChildren) => {
     }
   };
 
-  const handleFocusLabelChange = (label: string) => {
-    setFocusLabel(label);
-    localStorage.setItem("focusLabel", label);
-  };
-
   const handleStartFocus = () => {
     const endTime = Date.now() + focusRemaining;
     setFocusEndTime(endTime);
@@ -325,7 +313,6 @@ const TimerProvider = ({ children }: React.PropsWithChildren) => {
         focusRemaining,
         focusStatus,
         focusEndTime,
-        focusLabel,
         quoteIndex,
         isOnboardingCompleted,
         isSettingsOpen,
@@ -338,7 +325,6 @@ const TimerProvider = ({ children }: React.PropsWithChildren) => {
         handleShowMillisecondsChange,
         handleModeChange,
         handleFocusDurationChange,
-        handleFocusLabelChange,
         handleStartFocus,
         handlePauseFocus,
         handleResetFocus,

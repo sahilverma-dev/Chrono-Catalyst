@@ -5,12 +5,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { variants } from "@/constans/variants";
 import Countdown from "./countdown";
 import { Button } from "./ui/button";
-import {
-  PauseIcon,
-  PlayIcon,
-  ReloadIcon,
-  ResetIcon,
-} from "@radix-ui/react-icons";
+import { ReloadIcon } from "@radix-ui/react-icons";
 
 const Timer: React.FC = () => {
   const {
@@ -21,16 +16,15 @@ const Timer: React.FC = () => {
     showMilliseconds,
     date: target,
     mode,
-    focusLabel,
     focusRemaining,
     focusStatus,
     focusEndTime,
     quoteIndex,
     handleStartFocus,
-    handlePauseFocus,
     handleResetFocus,
     handleRefeshQuote,
     handleSettingsOpenChange,
+    handleFocusDurationChange,
   } = useTimer();
 
   const quote = useMemo(() => {
@@ -148,64 +142,64 @@ const Timer: React.FC = () => {
                 </motion.div>
               )}
 
-              {/* Focus Mode Header */}
-              {isFlowMode && (
-                <motion.div
-                  initial={{ opacity: 0, y: -20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className="text-center mb-4"
-                >
-                  <h2 className="text-3xl font-bold text-primary">
-                    {focusLabel}
-                  </h2>
-                </motion.div>
-              )}
-
               {/* Countdown Timer */}
-              {(isFlowMode || target) && (
-                <Countdown
-                  target={isFlowMode ? focusTarget : target!}
-                  showMilliseconds={showMilliseconds}
-                  isNumbersAnimated={isNumbersAnimated}
-                />
-              )}
+              {(isFlowMode || target) &&
+                (focusStatus === "running" || mode === "target") && (
+                  <div className="relative">
+                    <Countdown
+                      target={isFlowMode ? focusTarget : target!}
+                      showMilliseconds={showMilliseconds}
+                      isNumbersAnimated={isNumbersAnimated}
+                    />
+                    {isFlowMode && (
+                      <div className="flex justify-center mt-8">
+                        <Button
+                          size="icon"
+                          variant="ghost"
+                          onClick={handleResetFocus}
+                          className="rounded-full hover:bg-destructive/10 hover:text-destructive w-12 h-12"
+                        >
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="24"
+                            height="24"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          >
+                            <path d="M18 6 6 18" />
+                            <path d="m6 6 12 12" />
+                          </svg>
+                        </Button>
+                      </div>
+                    )}
+                  </div>
+                )}
 
-              {/* Focus Mode Controls */}
-              {isFlowMode && (
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className="flex justify-center gap-4 mt-8"
-                >
-                  {focusStatus === "running" ? (
-                    <Button
-                      size="lg"
-                      variant="outline"
-                      onClick={handlePauseFocus}
-                      className="gap-2"
-                    >
-                      <PauseIcon className="w-5 h-5" /> Pause
-                    </Button>
-                  ) : (
-                    <Button
-                      size="lg"
-                      onClick={handleStartFocus}
-                      className="gap-2"
-                    >
-                      <PlayIcon className="w-5 h-5" />{" "}
-                      {focusStatus === "paused" ? "Resume" : "Start"}
-                    </Button>
-                  )}
-                  <Button
-                    size="lg"
-                    variant="ghost"
-                    onClick={handleResetFocus}
-                    disabled={focusStatus === "idle"}
-                    className="gap-2"
-                  >
-                    <ResetIcon className="w-5 h-5" /> Reset
-                  </Button>
-                </motion.div>
+              {/* Focus Mode Presets (Idle State) */}
+              {isFlowMode && focusStatus === "idle" && (
+                <div className="flex flex-col items-center gap-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+                  <div className="grid grid-cols-2 gap-4 w-full max-w-sm">
+                    {[25, 40, 60, 120].map((mins) => (
+                      <Button
+                        key={mins}
+                        variant="outline"
+                        className="h-24 text-2xl font-light hover:border-primary hover:bg-primary/5 transition-all text-muted-foreground hover:text-foreground"
+                        onClick={() => {
+                          handleFocusDurationChange(mins);
+                          // We need to wait for state update or use a ref/effect,
+                          // but simpler is to queue the start
+                          setTimeout(handleStartFocus, 0);
+                        }}
+                      >
+                        {mins >= 60 ? `${mins / 60}h` : `${mins}m`}
+                      </Button>
+                    ))}
+                  </div>
+                </div>
               )}
             </>
           )}

@@ -33,8 +33,6 @@ const SettingSheet: React.FC<SettingSheetProps> = ({ open, onOpenChange }) => {
     showQuote,
     showMilliseconds,
     mode,
-    focusDuration,
-    focusLabel,
     handleDateChange,
     handleColorChange,
     handleIsNumbersAnimatedChange,
@@ -43,8 +41,6 @@ const SettingSheet: React.FC<SettingSheetProps> = ({ open, onOpenChange }) => {
     handleShowQuoteChange,
     handleShowMillisecondsChange,
     handleModeChange,
-    handleFocusDurationChange,
-    handleFocusLabelChange,
   } = useTimer();
   return (
     <Sheet open={open} onOpenChange={onOpenChange} modal>
@@ -75,7 +71,7 @@ const SettingSheet: React.FC<SettingSheetProps> = ({ open, onOpenChange }) => {
             </ToggleGroup>
           </div>
 
-          {mode === "target" ? (
+          {mode === "target" && (
             <div className="flex items-center justify-between gap-4">
               <DateTimePicker
                 id="date"
@@ -90,33 +86,6 @@ const SettingSheet: React.FC<SettingSheetProps> = ({ open, onOpenChange }) => {
                 }}
               />
             </div>
-          ) : (
-            <>
-              <div className="flex items-center justify-between gap-4">
-                <Label htmlFor="focus-duration">Duration (minutes)</Label>
-                <Input
-                  id="focus-duration"
-                  type="number"
-                  min={1}
-                  value={focusDuration}
-                  onChange={(e) =>
-                    handleFocusDurationChange(Number(e.target.value))
-                  }
-                  className="w-24 text-right"
-                />
-              </div>
-              <div className="flex items-center justify-between gap-4">
-                <Label htmlFor="focus-label">Label</Label>
-                <Input
-                  id="focus-label"
-                  type="text"
-                  value={focusLabel}
-                  placeholder="Focus"
-                  onChange={(e) => handleFocusLabelChange(e.target.value)}
-                  className="w-1/2"
-                />
-              </div>
-            </>
           )}
 
           <div className="flex items-center justify-between gap-4">
