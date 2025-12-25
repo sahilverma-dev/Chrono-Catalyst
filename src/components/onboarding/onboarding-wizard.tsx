@@ -3,16 +3,30 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "../ui/button";
 import { useTimer } from "@/hooks/use-timer";
 import { DateTimePicker } from "../ui/datetime-picker";
+import Countdown from "../countdown";
 
 import { Label } from "../ui/label";
 import { ToggleGroup, ToggleGroupItem } from "../ui/toggle-group";
 import { useTheme } from "../providers/theme-provider";
-import { ArrowRightIcon, CheckIcon } from "@radix-ui/react-icons";
+import {
+  ArrowRightIcon,
+  CheckIcon,
+  MoonIcon,
+  SunIcon,
+} from "@radix-ui/react-icons";
+import { Switch } from "../ui/switch";
+import { Input } from "../ui/input";
 
-type Step = "welcome" | "mode" | "setup" | "finish";
+type Step =
+  | "welcome"
+  | "mode"
+  | "setup"
+  | "appearance"
+  | "preferences"
+  | "finish";
 
 const OnboardingWizard = () => {
-  const { theme } = useTheme();
+  const { theme, setTheme } = useTheme();
   const [step, setStep] = useState<Step>("welcome");
   const {
     handleCompleteOnboarding,
@@ -20,13 +34,36 @@ const OnboardingWizard = () => {
     handleModeChange,
     date,
     handleDateChange,
+    // Appearance
+    color,
+    handleColorChange,
+    showGradient,
+    handleShowGradientChange,
+    // Preferences
+    showQuote,
+    handleShowQuoteChange,
+    showMilliseconds,
+    handleShowMillisecondsChange,
+    isNumbersAnimated,
+    handleIsNumbersAnimatedChange,
   } = useTimer();
 
   const handleNext = () => {
     if (step === "welcome") setStep("mode");
     else if (step === "mode") setStep("setup");
-    else if (step === "setup") setStep("finish");
+    else if (step === "setup") setStep("appearance");
+    else if (step === "appearance") setStep("preferences");
+    else if (step === "preferences") setStep("finish");
     else if (step === "finish") handleCompleteOnboarding();
+  };
+
+  const handleSkip = () => {
+    handleNext(); // Simply proceed to next step, effectively "using default" if nothing changed
+  };
+
+  const isNextDisabled = () => {
+    if (step === "setup" && mode === "target" && !date) return true;
+    return false;
   };
 
   return (
@@ -135,6 +172,11 @@ const OnboardingWizard = () => {
                         colorScheme: theme === "dark" ? "dark" : "light",
                       }}
                     />
+                    {!date && (
+                      <p className="text-sm text-destructive">
+                        Please select a target date to continue.
+                      </p>
+                    )}
                   </div>
                 ) : (
                   <div className="text-center py-4">
@@ -146,13 +188,151 @@ const OnboardingWizard = () => {
                 )}
               </div>
 
-              <Button size="lg" onClick={handleNext} className="w-full">
-                Continue <ArrowRightIcon className="ml-2 w-4 h-4" />
-              </Button>
+              <div className="flex flex-col gap-2">
+                <Button
+                  size="lg"
+                  onClick={handleNext}
+                  className="w-full"
+                  disabled={isNextDisabled()}
+                >
+                  Continue <ArrowRightIcon className="ml-2 w-4 h-4" />
+                </Button>
+                {/* No Skip for target setup as it is essential if mode is target, but mode switch is prev step */}
+              </div>
             </div>
           )}
 
-          {/* Step 4: Finish */}
+          {/* Step 4: Appearance */}
+          {step === "appearance" && (
+            <div className="space-y-6">
+              <div className="text-center">
+                <h2 className="text-2xl font-bold mb-2">Make it yours</h2>
+                <p className="text-muted-foreground">
+                  Customize the look and feel
+                </p>
+              </div>
+
+              <div className="space-y-6">
+                {/* Theme */}
+                <div className="flex items-center justify-between">
+                  <Label>Theme</Label>
+                  <ToggleGroup
+                    type="single"
+                    value={theme}
+                    onValueChange={(val) =>
+                      val && setTheme(val as "dark" | "light" | "system")
+                    }
+                  >
+                    <ToggleGroupItem value="light" aria-label="Light">
+                      <SunIcon />
+                    </ToggleGroupItem>
+                    <ToggleGroupItem value="dark" aria-label="Dark">
+                      <MoonIcon />
+                    </ToggleGroupItem>
+                  </ToggleGroup>
+                </div>
+
+                {/* Color */}
+                <div className="flex items-center justify-between gap-4">
+                  <Label htmlFor="color">Accent Color</Label>
+                  <Input
+                    id="color"
+                    type="color"
+                    value={color}
+                    onChange={handleColorChange}
+                    className="w-20 p-1 h-10"
+                  />
+                </div>
+
+                {/* Gradient */}
+                <div className="flex items-center justify-between gap-4">
+                  <Label htmlFor="wizard-gradient">Show BG gradient</Label>
+                  <Switch
+                    id="wizard-gradient"
+                    checked={showGradient}
+                    onCheckedChange={handleShowGradientChange}
+                  />
+                </div>
+              </div>
+
+              <div className="flex flex-col gap-2 pt-4">
+                <Button size="lg" onClick={handleNext} className="w-full">
+                  Next <ArrowRightIcon className="ml-2 w-4 h-4" />
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={handleSkip}
+                  className="w-full text-muted-foreground"
+                >
+                  Skip (Use Default)
+                </Button>
+              </div>
+            </div>
+          )}
+
+          {/* Step 5: Preferences */}
+          {step === "preferences" && (
+            <div className="space-y-6">
+              <div className="text-center">
+                <h2 className="text-2xl font-bold mb-2">Almost there</h2>
+                <p className="text-muted-foreground">
+                  Fine-tune your experience
+                </p>
+              </div>
+
+              <div className="flex justify-center scale-75 origin-top -mb-8">
+                <Countdown
+                  target={new Date(Date.now() + 24 * 60 * 60 * 1000)}
+                  showMilliseconds={showMilliseconds}
+                  isNumbersAnimated={isNumbersAnimated}
+                />
+              </div>
+
+              <div className="space-y-4">
+                <div className="flex items-center justify-between gap-4">
+                  <Label htmlFor="wiz-quote">Show Daily Quote</Label>
+                  <Switch
+                    id="wiz-quote"
+                    checked={showQuote}
+                    onCheckedChange={handleShowQuoteChange}
+                  />
+                </div>
+                <div className="flex items-center justify-between gap-4">
+                  <Label htmlFor="wiz-ms">Show Milliseconds</Label>
+                  <Switch
+                    id="wiz-ms"
+                    checked={showMilliseconds}
+                    onCheckedChange={handleShowMillisecondsChange}
+                  />
+                </div>
+                <div className="flex items-center justify-between gap-4">
+                  <Label htmlFor="wiz-anim">Animate Numbers</Label>
+                  <Switch
+                    id="wiz-anim"
+                    checked={isNumbersAnimated}
+                    onCheckedChange={handleIsNumbersAnimatedChange}
+                  />
+                </div>
+              </div>
+
+              <div className="flex flex-col gap-2 pt-4">
+                <Button size="lg" onClick={handleNext} className="w-full">
+                  Finish Setup <CheckIcon className="ml-2 w-4 h-4" />
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={handleSkip}
+                  className="w-full text-muted-foreground"
+                >
+                  Skip (Use Default)
+                </Button>
+              </div>
+            </div>
+          )}
+
+          {/* Step 6: Finish (existing) */}
           {step === "finish" && (
             <div className="text-center space-y-6">
               <div className="flex justify-center mb-4">
@@ -180,5 +360,4 @@ const OnboardingWizard = () => {
     </div>
   );
 };
-
 export default OnboardingWizard;

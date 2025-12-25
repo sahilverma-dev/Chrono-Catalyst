@@ -27,6 +27,7 @@ interface TimerContext {
 
   // Settings
   isSettingsOpen: boolean;
+  showGradient: boolean;
 
   handleMessageChange: (message: string) => void;
   handleShowQuoteChange: (showQuote: boolean) => void;
@@ -35,6 +36,7 @@ interface TimerContext {
   handleIsNumbersAnimatedChange: (isNumbersAnimated: boolean) => void;
   handleIsColorAnimatedChange: (isColorAnimated: boolean) => void;
   handleShowMillisecondsChange: (showMilliseconds: boolean) => void;
+  handleShowGradientChange: (showGradient: boolean) => void;
 
   // Focus Mode Handlers
   handleModeChange: (mode: TimerMode) => void;
@@ -68,6 +70,7 @@ export const TimerContext = createContext<TimerContext>({
   quoteIndex: -1,
   isOnboardingCompleted: true,
   isSettingsOpen: false,
+  showGradient: true,
 
   handleIsNumbersAnimatedChange: () => {},
   handleMessageChange: () => {},
@@ -75,6 +78,7 @@ export const TimerContext = createContext<TimerContext>({
   handleDateChange: () => {},
   handleIsColorAnimatedChange: () => {},
   handleShowMillisecondsChange: () => {},
+  handleShowGradientChange: () => {},
   handleModeChange: () => {},
   handleFocusDurationChange: () => {},
   handleStartFocus: () => {},
@@ -114,6 +118,10 @@ const TimerProvider = ({ children }: React.PropsWithChildren) => {
   });
   const [showMilliseconds, setShowMilliseconds] = useState(() => {
     const saved = localStorage.getItem("showMilliseconds");
+    return saved !== null ? JSON.parse(saved) : true;
+  });
+  const [showGradient, setShowGradient] = useState(() => {
+    const saved = localStorage.getItem("showGradient");
     return saved !== null ? JSON.parse(saved) : true;
   });
 
@@ -210,6 +218,11 @@ const TimerProvider = ({ children }: React.PropsWithChildren) => {
   const handleShowMillisecondsChange = (showMilliseconds: boolean) => {
     setShowMilliseconds(showMilliseconds);
     localStorage.setItem("showMilliseconds", JSON.stringify(showMilliseconds));
+  };
+
+  const handleShowGradientChange = (showGradient: boolean) => {
+    setShowGradient(showGradient);
+    localStorage.setItem("showGradient", JSON.stringify(showGradient));
   };
 
   // Focus Mode Handlers
@@ -316,6 +329,7 @@ const TimerProvider = ({ children }: React.PropsWithChildren) => {
         quoteIndex,
         isOnboardingCompleted,
         isSettingsOpen,
+        showGradient,
         handleShowQuoteChange,
         handleIsNumbersAnimatedChange,
         handleDateChange,
@@ -323,6 +337,7 @@ const TimerProvider = ({ children }: React.PropsWithChildren) => {
         handleIsColorAnimatedChange,
         handleMessageChange,
         handleShowMillisecondsChange,
+        handleShowGradientChange,
         handleModeChange,
         handleFocusDurationChange,
         handleStartFocus,
