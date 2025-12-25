@@ -41,7 +41,7 @@ interface TimerContext {
   // Focus Mode Handlers
   handleModeChange: (mode: TimerMode) => void;
   handleFocusDurationChange: (duration: number) => void;
-  handleStartFocus: () => void;
+  handleStartFocus: (duration?: number) => void;
   handlePauseFocus: () => void;
   handleResetFocus: () => void;
   handleRefeshQuote: () => void;
@@ -241,8 +241,18 @@ const TimerProvider = ({ children }: React.PropsWithChildren) => {
     }
   };
 
-  const handleStartFocus = () => {
-    const endTime = Date.now() + focusRemaining;
+  const handleStartFocus = (duration?: number) => {
+    let targetDuration = focusRemaining;
+
+    if (duration) {
+      setFocusDuration(duration);
+      localStorage.setItem("focusDuration", duration.toString());
+      targetDuration = duration * 60 * 1000;
+      setFocusRemaining(targetDuration);
+      localStorage.setItem("focusRemaining", targetDuration.toString());
+    }
+
+    const endTime = Date.now() + targetDuration;
     setFocusEndTime(endTime);
     localStorage.setItem("focusEndTime", endTime.toString());
     setFocusStatus("running");
