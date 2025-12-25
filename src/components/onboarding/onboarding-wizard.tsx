@@ -22,6 +22,7 @@ type Step =
   | "mode"
   | "setup"
   | "appearance"
+  | "personalization"
   | "preferences"
   | "finish";
 
@@ -39,9 +40,12 @@ const OnboardingWizard = () => {
     handleColorChange,
     showGradient,
     handleShowGradientChange,
-    // Preferences
+    // Personalization
+    message,
+    handleMessageChange,
     showQuote,
     handleShowQuoteChange,
+    // Preferences
     showMilliseconds,
     handleShowMillisecondsChange,
     isNumbersAnimated,
@@ -52,7 +56,8 @@ const OnboardingWizard = () => {
     if (step === "welcome") setStep("mode");
     else if (step === "mode") setStep("setup");
     else if (step === "setup") setStep("appearance");
-    else if (step === "appearance") setStep("preferences");
+    else if (step === "appearance") setStep("personalization");
+    else if (step === "personalization") setStep("preferences");
     else if (step === "preferences") setStep("finish");
     else if (step === "finish") handleCompleteOnboarding();
   };
@@ -197,7 +202,6 @@ const OnboardingWizard = () => {
                 >
                   Continue <ArrowRightIcon className="ml-2 w-4 h-4" />
                 </Button>
-                {/* No Skip for target setup as it is essential if mode is target, but mode switch is prev step */}
               </div>
             </div>
           )}
@@ -271,7 +275,54 @@ const OnboardingWizard = () => {
             </div>
           )}
 
-          {/* Step 5: Preferences */}
+          {/* Step 5: Personalization */}
+          {step === "personalization" && (
+            <div className="space-y-6">
+              <div className="text-center">
+                <h2 className="text-2xl font-bold mb-2">Personal Touch</h2>
+                <p className="text-muted-foreground">
+                  Add a greeting and some inspiration
+                </p>
+              </div>
+
+              <div className="space-y-6">
+                <div className="space-y-2">
+                  <Label htmlFor="message">Welcome Greeting</Label>
+                  <Input
+                    id="message"
+                    value={message}
+                    onChange={(e) => handleMessageChange(e.target.value)}
+                    placeholder="e.g. Hello Sahil, Focus Time!"
+                  />
+                </div>
+
+                <div className="flex items-center justify-between gap-4">
+                  <Label htmlFor="wiz-quote">Show Daily Quote</Label>
+                  <Switch
+                    id="wiz-quote"
+                    checked={showQuote}
+                    onCheckedChange={handleShowQuoteChange}
+                  />
+                </div>
+              </div>
+
+              <div className="flex flex-col gap-2 pt-4">
+                <Button size="lg" onClick={handleNext} className="w-full">
+                  Next <ArrowRightIcon className="ml-2 w-4 h-4" />
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={handleSkip}
+                  className="w-full text-muted-foreground"
+                >
+                  Skip (Use Default)
+                </Button>
+              </div>
+            </div>
+          )}
+
+          {/* Step 6: Preferences */}
           {step === "preferences" && (
             <div className="space-y-6">
               <div className="text-center">
@@ -290,14 +341,6 @@ const OnboardingWizard = () => {
               </div>
 
               <div className="space-y-4">
-                <div className="flex items-center justify-between gap-4">
-                  <Label htmlFor="wiz-quote">Show Daily Quote</Label>
-                  <Switch
-                    id="wiz-quote"
-                    checked={showQuote}
-                    onCheckedChange={handleShowQuoteChange}
-                  />
-                </div>
                 <div className="flex items-center justify-between gap-4">
                   <Label htmlFor="wiz-ms">Show Milliseconds</Label>
                   <Switch
@@ -332,7 +375,7 @@ const OnboardingWizard = () => {
             </div>
           )}
 
-          {/* Step 6: Finish (existing) */}
+          {/* Step 7: Finish */}
           {step === "finish" && (
             <div className="text-center space-y-6">
               <div className="flex justify-center mb-4">
