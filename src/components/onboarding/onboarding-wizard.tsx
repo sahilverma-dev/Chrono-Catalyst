@@ -292,7 +292,7 @@ const OnboardingWizard = () => {
                     id="message"
                     value={message}
                     onChange={(e) => handleMessageChange(e.target.value)}
-                    placeholder="e.g. Hello Sahil, Focus Time!"
+                    placeholder="e.g. Hello, Focus Time!"
                   />
                 </div>
 

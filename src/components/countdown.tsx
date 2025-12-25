@@ -113,9 +113,11 @@ const Countdown: React.FC<CountdownProps> = ({
       exit={{ opacity: 0 }}
     >
       {timeUnits
+
         .filter(
           (t) =>
-            t.value > 0 || t.unit === "seconds" || t.unit === "milliseconds"
+            t.value > 0 ||
+            ["hours", "minutes", "seconds", "milliseconds"].includes(t.unit)
         )
         .map(({ unit, value }, index) => {
           if (unit === "milliseconds" && !showMilliseconds) {
