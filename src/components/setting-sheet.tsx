@@ -14,6 +14,7 @@ import { useTheme } from "./providers/theme-provider";
 import { Textarea } from "./ui/textarea";
 import { Button } from "./ui/button";
 import { DateTimePicker } from "./ui/datetime-picker";
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 
 interface SettingSheetProps {
   open: boolean;
@@ -31,6 +32,9 @@ const SettingSheet: React.FC<SettingSheetProps> = ({ open, onOpenChange }) => {
     message,
     showQuote,
     showMilliseconds,
+    mode,
+    focusDuration,
+    focusLabel,
     handleDateChange,
     handleColorChange,
     handleIsNumbersAnimatedChange,
@@ -38,10 +42,13 @@ const SettingSheet: React.FC<SettingSheetProps> = ({ open, onOpenChange }) => {
     handleMessageChange,
     handleShowQuoteChange,
     handleShowMillisecondsChange,
+    handleModeChange,
+    handleFocusDurationChange,
+    handleFocusLabelChange,
   } = useTimer();
   return (
     <Sheet open={open} onOpenChange={onOpenChange} modal>
-      <SheetContent>
+      <SheetContent className="overflow-y-auto">
         <SheetHeader>
           <SheetTitle>Settings</SheetTitle>
           <SheetDescription>
@@ -49,22 +56,68 @@ const SettingSheet: React.FC<SettingSheetProps> = ({ open, onOpenChange }) => {
           </SheetDescription>
         </SheetHeader>
         <div className="space-y-4 py-4">
-          <div className="flex items-center justify-between gap-4">
-            {/* <Label htmlFor="date">Target Date</Label> */}
-
-            <DateTimePicker
-              id="date"
-              required
-              value={date}
-              placeholder="Pick your target date and time"
-              min={new Date()}
-              use12HourFormat
-              onChange={handleDateChange}
-              style={{
-                colorScheme: theme === "dark" ? "dark" : "light",
+          <div className="flex flex-col gap-2">
+            <Label>Timer Mode</Label>
+            <ToggleGroup
+              type="single"
+              value={mode}
+              onValueChange={(val) => {
+                if (val) handleModeChange(val as "target" | "focus");
               }}
-            />
+              className="justify-start"
+            >
+              <ToggleGroupItem value="target" aria-label="Target Date">
+                Target Date
+              </ToggleGroupItem>
+              <ToggleGroupItem value="focus" aria-label="Flow Mode">
+                Flow Mode
+              </ToggleGroupItem>
+            </ToggleGroup>
           </div>
+
+          {mode === "target" ? (
+            <div className="flex items-center justify-between gap-4">
+              <DateTimePicker
+                id="date"
+                required
+                value={date}
+                placeholder="Pick your target date and time"
+                min={new Date()}
+                use12HourFormat
+                onChange={handleDateChange}
+                style={{
+                  colorScheme: theme === "dark" ? "dark" : "light",
+                }}
+              />
+            </div>
+          ) : (
+            <>
+              <div className="flex items-center justify-between gap-4">
+                <Label htmlFor="focus-duration">Duration (minutes)</Label>
+                <Input
+                  id="focus-duration"
+                  type="number"
+                  min={1}
+                  value={focusDuration}
+                  onChange={(e) =>
+                    handleFocusDurationChange(Number(e.target.value))
+                  }
+                  className="w-24 text-right"
+                />
+              </div>
+              <div className="flex items-center justify-between gap-4">
+                <Label htmlFor="focus-label">Label</Label>
+                <Input
+                  id="focus-label"
+                  type="text"
+                  value={focusLabel}
+                  placeholder="Focus"
+                  onChange={(e) => handleFocusLabelChange(e.target.value)}
+                  className="w-1/2"
+                />
+              </div>
+            </>
+          )}
 
           <div className="flex items-center justify-between gap-4">
             <span className={labelVariants()}>Theme</span>
