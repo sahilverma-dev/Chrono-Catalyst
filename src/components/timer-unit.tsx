@@ -5,13 +5,24 @@ import React from "react";
 interface TimerUnitProps {
   value: number;
   unit: string;
-  format: Format;
   index: number;
   animated: boolean;
 }
 
 const TimerUnit = React.memo<TimerUnitProps>(
-  ({ value, unit, format, index, animated }) => {
+  ({ value, unit, index, animated }) => {
+    const format: Format = React.useMemo(
+      () => ({
+        minimumIntegerDigits:
+          unit === "milliseconds"
+            ? 3
+            : ["seconds", "minutes", "hours"].includes(unit)
+            ? 2
+            : undefined,
+      }),
+      [unit]
+    );
+
     return (
       <motion.div
         layout
