@@ -192,6 +192,28 @@ const SettingSheet: React.FC<SettingSheetProps> = ({ open, onOpenChange }) => {
               Clear Custom Message
             </Button>
           )}
+
+          <div className="pt-4 border-t">
+            <h3 className="font-semibold mb-2">About & Support</h3>
+            <div className="flex flex-col gap-2">
+              <a
+                href="https://chromewebstore.google.com/search/chrono-catalyst"
+                target="_blank"
+                rel="noreferrer"
+                className="text-sm hover:underline text-muted-foreground hover:text-foreground transition-colors"
+              >
+                Rate this extension
+              </a>
+              <a
+                href="https://github.com/sahilverma-dev/Chrono-Catalyst/issues"
+                target="_blank"
+                rel="noreferrer"
+                className="text-sm hover:underline text-muted-foreground hover:text-foreground transition-colors"
+              >
+                Bug Report & Feature Request
+              </a>
+            </div>
+          </div>
         </div>
       </SheetContent>
     </Sheet>

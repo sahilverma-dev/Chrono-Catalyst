@@ -23,6 +23,9 @@ interface TimerContext {
   focusLabel: string;
   quoteIndex: number;
 
+  // Onboarding
+  isOnboardingCompleted: boolean;
+
   handleMessageChange: (message: string) => void;
   handleShowQuoteChange: (showQuote: boolean) => void;
   handleDateChange: (date: Date | undefined) => void;
@@ -39,6 +42,9 @@ interface TimerContext {
   handlePauseFocus: () => void;
   handleResetFocus: () => void;
   handleRefeshQuote: () => void;
+
+  // Onboarding Handlers
+  handleCompleteOnboarding: () => void;
 }
 
 export const TimerContext = createContext<TimerContext>({
@@ -57,6 +63,7 @@ export const TimerContext = createContext<TimerContext>({
   focusEndTime: null,
   focusLabel: "Focus",
   quoteIndex: -1,
+  isOnboardingCompleted: true,
 
   handleIsNumbersAnimatedChange: () => {},
   handleMessageChange: () => {},
@@ -71,6 +78,7 @@ export const TimerContext = createContext<TimerContext>({
   handlePauseFocus: () => {},
   handleResetFocus: () => {},
   handleRefeshQuote: () => {},
+  handleCompleteOnboarding: () => {},
 });
 
 const TimerProvider = ({ children }: React.PropsWithChildren) => {
@@ -130,6 +138,12 @@ const TimerProvider = ({ children }: React.PropsWithChildren) => {
   const [quoteIndex, setQuoteIndex] = useState(() => {
     const saved = localStorage.getItem("quoteIndex");
     return saved ? parseInt(saved) : -1;
+  });
+
+  // Onboarding State
+  const [isOnboardingCompleted, setIsOnboardingCompleted] = useState(() => {
+    const saved = localStorage.getItem("isOnboardingCompleted");
+    return saved ? JSON.parse(saved) : false;
   });
 
   const handleDateChange = (date: Date | undefined) => {
@@ -253,6 +267,11 @@ const TimerProvider = ({ children }: React.PropsWithChildren) => {
     localStorage.setItem("quoteIndex", randomIndex.toString());
   };
 
+  const handleCompleteOnboarding = () => {
+    setIsOnboardingCompleted(true);
+    localStorage.setItem("isOnboardingCompleted", JSON.stringify(true));
+  };
+
   // Restore running timer on load if needed
   useEffect(() => {
     if (mode === "focus" && focusStatus === "running" && focusEndTime) {
@@ -293,6 +312,7 @@ const TimerProvider = ({ children }: React.PropsWithChildren) => {
         focusEndTime,
         focusLabel,
         quoteIndex,
+        isOnboardingCompleted,
         handleShowQuoteChange,
         handleIsNumbersAnimatedChange,
         handleDateChange,
@@ -307,6 +327,7 @@ const TimerProvider = ({ children }: React.PropsWithChildren) => {
         handlePauseFocus,
         handleResetFocus,
         handleRefeshQuote,
+        handleCompleteOnboarding,
       }}
     >
       {children}

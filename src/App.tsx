@@ -2,9 +2,10 @@ import Timer from "./components/timer";
 import Header from "./components/header";
 import { useTimer } from "./hooks/use-timer";
 import { cn } from "./lib/utils";
+import OnboardingWizard from "./components/onboarding/onboarding-wizard";
 
 const App = () => {
-  const { color, isColorAnimated } = useTimer();
+  const { color, isColorAnimated, isOnboardingCompleted } = useTimer();
   return (
     <div className="w-full h-dvh flex items-center justify-center relative">
       <div
@@ -16,6 +17,7 @@ const App = () => {
           background: `radial-gradient(125% 125% at 50% 10%, #00000000 40%, ${color} 100%)`,
         }}
       />
+      {!isOnboardingCompleted && <OnboardingWizard />}
       <Header />
       <Timer />
     </div>
